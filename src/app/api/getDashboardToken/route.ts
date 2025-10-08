@@ -17,7 +17,20 @@ export async function GET() {
     },
     body: "grant_type=client_credentials&scope=all-apis",
   });
+  if (!m2m.ok) {
+    const err = await safeJson(m2m);
+    return NextResponse.json(
+      { error: "m2m_token_failed", detail: err },
+      { status: 500 }
+    );
+  }
   const { access_token } = await m2m.json();
+  if (!access_token) {
+    return NextResponse.json(
+      { error: "m2m_token_missing" },
+      { status: 500 }
+    );
+  }
 
   // Paso 2: obtener tokeninfo
   const info = await fetch(
@@ -26,7 +39,38 @@ export async function GET() {
       headers: { Authorization: `Bearer ${access_token}` },
     }
   );
+  if (!info.ok) {
+    const err = await safeJson(info);
+    return NextResponse.json(
+      { error: "tokeninfo_failed", detail: err },
+      { status: 500 }
+    );
+  }
   const tokenInfo = await info.json();
+  const details = Array.isArray(tokenInfo?.authorization_details)
+    ? tokenInfo.authorization_details
+    : [];
+  if (details.length === 0) {
+    return NextResponse.json(
+      { error: "authorization_details_empty", tokenInfo },
+      { status: 500 }
+    );
+  }
+
+  // Heurística robusta: buscar el detalle que corresponda a published dashboard external embedding
+  const byType = details.find((d: any) =>
+    typeof d?.type === "string" && /dashboard|lakeview|published/i.test(d.type)
+  );
+  const byActions = details.find((d: any) =>
+    Array.isArray(d?.actions) && d.actions.some((a: string) => /published|dashboard/i.test(a))
+  );
+  const authDetail = byType ?? byActions ?? details[details.length - 1];
+  if (!authDetail) {
+    return NextResponse.json(
+      { error: "authorization_detail_not_found", details },
+      { status: 500 }
+    );
+  }
 
   // Paso 3: mint scoped token
   const scoped = await fetch(`${base}/oidc/v1/token`, {
@@ -37,9 +81,34 @@ export async function GET() {
     },
     body:
       "grant_type=client_credentials&authorization_details=" +
-      encodeURIComponent(JSON.stringify(tokenInfo.authorization_details[2])),
+      encodeURIComponent(JSON.stringify(authDetail)),
   });
 
+  if (!scoped.ok) {
+    const err = await safeJson(scoped);
+    return NextResponse.json(
+      { error: "scoped_token_failed", detail: err },
+      { status: 500 }
+    );
+  }
   const scopedData = await scoped.json();
+  if (!scopedData?.access_token) {
+    return NextResponse.json(
+      { error: "scoped_token_missing", data: scopedData },
+      { status: 500 }
+    );
+  }
   return NextResponse.json(scopedData);
+}
+
+async function safeJson(res: Response) {
+  try {
+    return await res.json();
+  } catch {
+    try {
+      return await res.text();
+    } catch {
+      return { status: res.status, statusText: res.statusText };
+    }
+  }
 }
