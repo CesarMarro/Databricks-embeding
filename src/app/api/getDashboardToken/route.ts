@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
 
+type AuthorizationDetail = {
+  type?: string;
+  actions?: string[];
+  // Databricks may include additional fields we don't explicitly use
+  [key: string]: unknown;
+};
+
 export async function GET() {
   const base = process.env.NEXT_PUBLIC_DATABRICKS_URL!;
   const clientId = process.env.DATABRICKS_CLIENT_ID!;
@@ -47,8 +54,8 @@ export async function GET() {
     );
   }
   const tokenInfo = await info.json();
-  const details = Array.isArray(tokenInfo?.authorization_details)
-    ? tokenInfo.authorization_details
+  const details: AuthorizationDetail[] = Array.isArray(tokenInfo?.authorization_details)
+    ? (tokenInfo.authorization_details as AuthorizationDetail[])
     : [];
   if (details.length === 0) {
     return NextResponse.json(
@@ -58,10 +65,10 @@ export async function GET() {
   }
 
   // Heurística robusta: buscar el detalle que corresponda a published dashboard external embedding
-  const byType = details.find((d: any) =>
-    typeof d?.type === "string" && /dashboard|lakeview|published/i.test(d.type)
+  const byType = details.find((d: AuthorizationDetail) =>
+    typeof d?.type === "string" && /dashboard|lakeview|published/i.test(d.type as string)
   );
-  const byActions = details.find((d: any) =>
+  const byActions = details.find((d: AuthorizationDetail) =>
     Array.isArray(d?.actions) && d.actions.some((a: string) => /published|dashboard/i.test(a))
   );
   const authDetail = byType ?? byActions ?? details[details.length - 1];
