@@ -5,6 +5,8 @@ export async function GET() {
   const clientId = process.env.DATABRICKS_CLIENT_ID!;
   const clientSecret = process.env.DATABRICKS_CLIENT_SECRET!;
   const dashboardId = process.env.NEXT_PUBLIC_DASHBOARD_ID!;
+  const workspaceId = process.env.NEXT_PUBLIC_WORKSPACE_ID!;
+  const legacyAclPath = process.env.NEXT_PUBLIC_DASHBOARD_LEGACY_ACL_PATH; // opcional
 
   const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
 
@@ -17,27 +19,35 @@ export async function GET() {
     },
     body: "grant_type=client_credentials&scope=all-apis",
   });
-  const { access_token } = await m2m.json();
+  await m2m.json(); // no necesitamos el body; solo validar que el SP es válido
 
-  // Paso 2: obtener tokeninfo del dashboard publicado (external)
-  const info = await fetch(
-    `${base}/api/2.0/lakeview/dashboards/${dashboardId}/published/tokeninfo?external_viewer_id=testuser&external_value=testuser`,
+  // Paso 2: construir authorization_details explícitos (como en el curl que funcionó)
+  const details = [
     {
-      headers: { Authorization: `Bearer ${access_token}` },
-    }
-  );
-  const tokenInfo = await info.json();
-
-  // Paso 3: mint scoped token enviando TODO el array de authorization_details
-  const details = Array.isArray(tokenInfo?.authorization_details)
-    ? tokenInfo.authorization_details
-    : [];
-  if (!details.length) {
-    return NextResponse.json(
-      { error: "authorization_details_empty", tokenInfo },
-      { status: 500 }
-    );
-  }
+      type: "workspace_rule_set",
+      resource_name: `workspaces/${workspaceId}`,
+      grant_rules: [
+        { permission_set: "permissionSets/workspace.workspace-access" },
+      ],
+    },
+    {
+      type: "workspace_rule_set",
+      resource_name: `workspaces/${workspaceId}`,
+      grant_rules: [
+        { permission_set: "permissionSets/workspace.dbsql-access" },
+      ],
+    },
+    {
+      type: "workspace_rule_set",
+      resource_name: `workspaces/${workspaceId}/dashboards/${dashboardId}`,
+      ...(legacyAclPath
+        ? { resource_legacy_acl_path: legacyAclPath }
+        : {}),
+      grant_rules: [
+        { permission_set: "permissionSets/dashboard.runner" },
+      ],
+    },
+  ];
 
   const scoped = await fetch(`${base}/oidc/v1/token`, {
     method: "POST",
