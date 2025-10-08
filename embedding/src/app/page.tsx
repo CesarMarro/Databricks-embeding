@@ -34,7 +34,7 @@ export default function Home() {
       {/* POCs grid */}
       <section id="pocs" className="mx-auto max-w-7xl px-6 py-12">
         <h2 className="text-2xl font-semibold text-[var(--brand-ink)]">Pruebas de concepto</h2>
-        <p className="mt-2 text-sm text-[var(--muted-ink)]">Colección de demos para clientes. Agregaremos más módulos pronto.</p>
+        <p className="mt-2 text-sm text-[var(--muted-ink)]">Colección de demos para clientes. Agregaremos más pronto.</p>
 
         <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {/* Databricks Lakeview Dashboard POC */}
