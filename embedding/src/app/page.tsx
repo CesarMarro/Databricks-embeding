@@ -61,7 +61,7 @@ export default function Home() {
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4 transition group-hover:translate-x-0.5"><path d="M13.293 4.293a1 1 0 0 1 1.414 0l6 6a.999.999 0 0 1 0 1.414l-6 6a1 1 0 1 1-1.414-1.414L17.586 12l-4.293-4.293a1 1 0 0 1 0-1.414Z"/><path d="M4 11a1 1 0 1 0 0 2h12a1 1 0 1 0 0-2H4Z"/></svg>
               </div>
             </div>
-          </a>
+          </Link>
 
           {/* Placeholder POCs */}
           <div className="relative overflow-hidden rounded-xl border border-dashed border-[var(--card-border)] bg-[var(--card-bg)] p-5 text-[var(--muted-ink)]">
