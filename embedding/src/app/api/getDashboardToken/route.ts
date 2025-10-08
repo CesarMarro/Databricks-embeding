@@ -5,7 +5,6 @@ export async function GET() {
   const clientId = process.env.DATABRICKS_CLIENT_ID!;
   const clientSecret = process.env.DATABRICKS_CLIENT_SECRET!;
   const dashboardId = process.env.NEXT_PUBLIC_DASHBOARD_ID!;
-  const workspaceId = process.env.NEXT_PUBLIC_WORKSPACE_ID!;
 
   const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
 
