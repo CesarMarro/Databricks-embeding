@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main className="min-h-screen">
@@ -20,12 +22,12 @@ export default function Home() {
               >
                 Ver POCs
               </a>
-              <a
+              <Link
                 href="/contacto"
                 className="inline-flex items-center gap-2 rounded-md bg-[var(--brand-accent-600)] px-4 py-2 text-white transition hover:bg-[var(--brand-accent-700)]"
               >
                 Contacto
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -38,7 +40,7 @@ export default function Home() {
 
         <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {/* Databricks Lakeview Dashboard POC */}
-          <a
+          <Link
             href="/pocs/dashboard"
             className="group relative overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-5 shadow-sm transition hover:shadow-md"
           >
