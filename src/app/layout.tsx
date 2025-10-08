@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Image from "next/image";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,15 +27,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <header className="sticky top-0 z-40 w-full border-b border-[color:var(--card-border)] bg-[color:var(--header-bg)]/90 backdrop-blur">
+        <header className="sticky top-0 z-40 w-full bg-blue-700 text-white">
           <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
             <Link href="/" className="flex items-center gap-2">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-[color:var(--brand-primary-600)] text-white">M</span>
-              <span className="text-sm font-semibold tracking-wide text-[color:var(--brand-ink)]">Martinexsa Labs</span>
+              <Image src="/martinexsa2.png" alt="martinexsa" width={28} height={28} priority />
+              <span className="text-sm font-semibold tracking-wide">martinexsa</span>
             </Link>
             <nav className="flex items-center gap-4 text-sm">
-              <Link href="/#pocs" className="text-[color:var(--muted-ink)] hover:text-[color:var(--brand-ink)]">POCs</Link>
-              <Link href="/contacto" className="text-[color:var(--muted-ink)] hover:text-[color:var(--brand-ink)]">Contacto</Link>
+              <Link href="/#pocs" className="text-white/80 hover:text-white">POCs</Link>
+              <Link href="/contacto" className="text-white/80 hover:text-white">Contacto</Link>
             </nav>
           </div>
         </header>
@@ -48,3 +49,4 @@ export default function RootLayout({
     </html>
   );
 }
+

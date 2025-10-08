@@ -39,24 +39,27 @@ export default function DashboardPOC() {
   }, []);
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold text-[var(--brand-ink)]">Lakeview Dashboard</h1>
-          <p className="text-sm text-[var(--muted-ink)]">Visualización embebida desde Databricks.</p>
+    <div className="min-h-screen bg-white">
+      <main className="mx-auto max-w-7xl px-6 py-8">
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-semibold text-gray-900">Dashboard para el sistema bancario</h1>
+            <p className="text-sm text-gray-500">Visualización de lo que podria ser tu dashboard</p>
+          </div>
+          <Link
+            href="/"
+            className="rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-50"
+          >
+            Volver
+          </Link>
         </div>
-        <Link
-          href="/"
-          className="rounded-md border border-[var(--card-border)] bg-[var(--card-bg)] px-3 py-1.5 text-sm text-[var(--brand-ink)] hover:bg-[var(--brand-primary-50)]"
-        >
-          Volver
-        </Link>
-      </div>
 
-      <div
-        id="dashboard-container"
-        style={{ width: "100%", height: "80vh", border: "none" }}
-      />
-    </main>
+        <div
+          id="dashboard-container"
+          style={{ width: "100%", height: "80vh", border: "none" }}
+        />
+      </main>
+    </div>
   );
 }
+
