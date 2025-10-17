@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Image from "next/image";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +29,6 @@ export default function RootLayout({
         <header className="sticky top-0 z-40 w-full bg-blue-700 text-white">
           <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/martinexsa2.png" alt="martinexsa" width={28} height={28} priority />
               <span className="text-sm font-semibold tracking-wide">martinexsa</span>
             </Link>
             <nav className="flex items-center gap-4 text-sm">

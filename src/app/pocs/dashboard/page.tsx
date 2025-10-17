@@ -1,42 +1,37 @@
 "use client";
 
-import { useEffect } from "react";
-import { DatabricksDashboard } from "@databricks/aibi-client";
+// import { useEffect } from "react";
+// import { DatabricksDashboard } from "@databricks/aibi-client";
 import Link from "next/link";
 
 export default function DashboardPOC() {
-  useEffect(() => {
-    let dashboard: DatabricksDashboard | undefined;
-
-    async function init() {
-      try {
-        const res = await fetch("/api/getDashboardToken");
-        if (!res.ok) throw new Error("No se pudo obtener el token del dashboard");
-        const data = await res.json();
-
-        const container = document.getElementById("dashboard-container");
-        if (!container) return;
-
-        dashboard = new DatabricksDashboard({
-          instanceUrl: process.env.NEXT_PUBLIC_DATABRICKS_URL!,
-          workspaceId: process.env.NEXT_PUBLIC_WORKSPACE_ID!,
-          dashboardId: process.env.NEXT_PUBLIC_DASHBOARD_ID!,
-          token: data.access_token,
-          container,
-        });
-
-        dashboard.initialize();
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
-    init();
-
-    return () => {
-      // Si la librería expone método de cleanup, llamarlo aquí (p.ej. dashboard?.destroy())
-    };
-  }, []);
+  // Embedding SDK deshabilitado temporalmente:
+  // useEffect(() => {
+  //   let dashboard: DatabricksDashboard | undefined;
+  //   async function init() {
+  //     try {
+  //       const res = await fetch("/api/getDashboardToken");
+  //       if (!res.ok) throw new Error("No se pudo obtener el token del dashboard");
+  //       const data = await res.json();
+  //       const container = document.getElementById("dashboard-container");
+  //       if (!container) return;
+  //       dashboard = new DatabricksDashboard({
+  //         instanceUrl: process.env.NEXT_PUBLIC_DATABRICKS_URL!,
+  //         workspaceId: process.env.NEXT_PUBLIC_WORKSPACE_ID!,
+  //         dashboardId: process.env.NEXT_PUBLIC_DASHBOARD_ID!,
+  //         token: data.access_token,
+  //         container,
+  //       });
+  //       dashboard.initialize();
+  //     } catch (e) {
+  //       console.error(e);
+  //     }
+  //   }
+  //   init();
+  //   return () => {
+  //     // dashboard?.destroy?.();
+  //   };
+  // }, []);
 
   return (
     <div className="min-h-screen bg-white">
@@ -53,11 +48,14 @@ export default function DashboardPOC() {
             Volver
           </Link>
         </div>
-
-        <div
-          id="dashboard-container"
-          style={{ width: "100%", height: "80vh", border: "none" }}
-        />
+        <div className="rounded-md overflow-hidden border border-gray-200">
+          <iframe
+            src="https://dbc-165412db-3061.cloud.databricks.com/embed/dashboardsv3/01f0a3ff56a81bd69d48a8d1c8cea9d5?o=608390911405752"
+            width="100%"
+            height="800"
+            frameBorder={0}
+          />
+        </div>
       </main>
     </div>
   );
