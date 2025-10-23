@@ -8,9 +8,10 @@ import { runDatasetQuery } from "@/lib/dashboard/query-runner";
 interface DashboardLayoutProps {
   page: Page;
   parameters: Record<string, unknown>;
+  onParameterChange?: (paramName: string, value: unknown) => void;
 }
 
-export function DashboardLayout({ page, parameters }: DashboardLayoutProps) {
+export function DashboardLayout({ page, parameters, onParameterChange }: DashboardLayoutProps) {
   const [widgetData, setWidgetData] = useState<Map<string, Record<string, unknown>[]>>(new Map());
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<Map<string, string>>(new Map());
@@ -28,6 +29,12 @@ export function DashboardLayout({ page, parameters }: DashboardLayoutProps) {
           
           // Skip text widgets (no data needed)
           if (widget.multilineTextboxSpec) {
+            return;
+          }
+          
+          // Skip filter widgets (they don't need data fetching)
+          const widgetType = widget.spec?.widgetType;
+          if (widgetType === "filter-single-select" || widgetType === "range-slider") {
             return;
           }
 
@@ -95,7 +102,12 @@ export function DashboardLayout({ page, parameters }: DashboardLayoutProps) {
               </div>
             ) : (
               <div className="w-full">
-                <WidgetRenderer widget={widget} data={data} parameters={parameters} />
+                <WidgetRenderer 
+                  widget={widget} 
+                  data={data} 
+                  parameters={parameters}
+                  onParameterChange={onParameterChange}
+                />
               </div>
             )}
           </div>

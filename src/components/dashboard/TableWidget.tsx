@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import type { WidgetRenderProps } from "@/lib/dashboard/types";
 
 export function TableWidget({ widget, data }: WidgetRenderProps) {
   const spec = widget.spec;
-  const [currentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
   const rowsPerPage = 20;
   
   if (!data || data.length === 0) {
@@ -20,6 +21,7 @@ export function TableWidget({ widget, data }: WidgetRenderProps) {
   const columns = spec?.encodings?.columns?.map((col: any) => col.fieldName) || Object.keys(data[0]);
   
   // Pagination
+  const totalPages = Math.ceil(data.length / rowsPerPage);
   const startIdx = currentPage * rowsPerPage;
   const endIdx = Math.min(startIdx + rowsPerPage, data.length);
   const paginatedData = data.slice(startIdx, endIdx);
@@ -88,8 +90,35 @@ export function TableWidget({ widget, data }: WidgetRenderProps) {
             </tbody>
           </table>
         </div>
-        {data.length > 100 && (
-          <div className="mt-2 text-xs text-gray-500">Mostrando primeros 100 de {data.length} registros</div>
+        
+        {/* Pagination controls */}
+        {totalPages > 1 && (
+          <div className="border-t p-3 flex items-center justify-between bg-gray-50">
+            <div className="text-xs text-gray-600">
+              Mostrando {startIdx + 1}-{endIdx} de {data.length} registros
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+                disabled={currentPage === 0}
+              >
+                ← Anterior
+              </Button>
+              <div className="flex items-center gap-1 text-xs text-gray-600 px-2">
+                Página {currentPage + 1} de {totalPages}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
+                disabled={currentPage === totalPages - 1}
+              >
+                Siguiente →
+              </Button>
+            </div>
+          </div>
         )}
       </CardContent>
     </Card>

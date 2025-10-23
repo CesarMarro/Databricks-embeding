@@ -12,10 +12,10 @@ interface FilterSingleSelectWidgetProps {
 
 export function FilterSingleSelectWidget({ widget, parameters, onParameterChange }: FilterSingleSelectWidgetProps) {
   const spec = widget.spec;
-  const fieldName = spec?.encodings?.fields?.[0]?.fieldName;
+  const field = spec?.encodings?.fields?.[0];
   
-  // Get parameter name from field name (e.g., "costo_retencion")
-  const paramName = fieldName || widget.name;
+  // Get parameter name - try parameterName first, then fieldName, then widget name
+  const paramName = field?.parameterName || field?.fieldName || widget.name;
   
   // Get current value from parameters or default
   const [value, setValue] = useState<string>(
@@ -51,9 +51,9 @@ export function FilterSingleSelectWidget({ widget, parameters, onParameterChange
   };
   
   return (
-    <Card className="bg-white border-gray-200 h-full flex flex-col">
-      <CardContent className="p-4 flex items-center gap-3">
-        <Label htmlFor={paramName} className="text-sm font-semibold text-gray-900 whitespace-nowrap">
+    <Card className="bg-white border-gray-200 h-full flex flex-col shadow-sm">
+      <CardContent className="p-4">
+        <Label htmlFor={paramName} className="text-sm font-semibold text-gray-900 block mb-2">
           {spec?.frame?.title || paramName}
         </Label>
         <Input
@@ -62,7 +62,7 @@ export function FilterSingleSelectWidget({ widget, parameters, onParameterChange
           value={value}
           onChange={(e) => handleChange(e.target.value)}
           onBlur={handleBlur}
-          className="flex-1 text-right font-medium"
+          className="w-full text-lg font-semibold text-gray-900 border-2 border-gray-300 focus:border-indigo-500"
           step="0.01"
         />
       </CardContent>

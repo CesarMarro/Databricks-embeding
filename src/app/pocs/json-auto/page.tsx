@@ -238,7 +238,15 @@ export default function JsonAutoPage() {
                       .filter((p) => p.pageType !== "PAGE_TYPE_GLOBAL_FILTERS")
                       .map((page) => (
                         <TabsContent key={page.name} value={page.name} className="mt-4">
-                          <DashboardLayout key={refreshKey} page={page} parameters={paramStore.getAll()} />
+                          <DashboardLayout 
+                            key={refreshKey} 
+                            page={page} 
+                            parameters={paramStore.getAll()}
+                            onParameterChange={(paramName, value) => {
+                              paramStore.set(paramName, value);
+                              setRefreshKey(k => k + 1);
+                            }}
+                          />
                         </TabsContent>
                       ))}
                   </Tabs>

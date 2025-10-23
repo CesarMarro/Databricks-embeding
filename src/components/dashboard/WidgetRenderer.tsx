@@ -13,9 +13,10 @@ interface WidgetRendererProps {
   widget: Widget;
   data: any[];
   parameters?: Record<string, any>;
+  onParameterChange?: (paramName: string, value: any) => void;
 }
 
-export function WidgetRenderer({ widget, data, parameters }: WidgetRendererProps) {
+export function WidgetRenderer({ widget, data, parameters, onParameterChange }: WidgetRendererProps) {
   // Handle text widgets (no data needed)
   if (widget.multilineTextboxSpec) {
     return <TextWidget widget={widget} />;
@@ -40,10 +41,10 @@ export function WidgetRenderer({ widget, data, parameters }: WidgetRendererProps
       return <PivotTableWidget widget={widget} data={data} parameters={parameters} />;
     
     case "range-slider":
-      return <RangeSliderWidget widget={widget} parameters={parameters || {}} />;
+      return <RangeSliderWidget widget={widget} parameters={parameters || {}} onParameterChange={onParameterChange} />;
     
     case "filter-single-select":
-      return <FilterSingleSelectWidget widget={widget} parameters={parameters || {}} />;
+      return <FilterSingleSelectWidget widget={widget} parameters={parameters || {}} onParameterChange={onParameterChange} />;
     
     case "choropleth-map":
       return (
