@@ -76,9 +76,12 @@ export default function Home() {
               <CardDescription>Espacio para otro dashboard o demo (próximamente).</CardDescription>
             </CardHeader>
             <CardContent className="relative">
-              <button className="rounded-md border border-[var(--card-border)] px-3 py-2 text-sm hover:bg-[var(--brand-primary-50)]/40">
-                Notificarme
-              </button>
+              <Link
+                href="/pocs/json-dashboard"
+                className="inline-flex items-center gap-2 rounded-md bg-[var(--brand-primary-600)] px-3 py-2 text-white text-sm transition hover:bg-[var(--brand-primary-700)]"
+              >
+                Abrir JSON Dashboard
+              </Link>
             </CardContent>
           </Card>
 
