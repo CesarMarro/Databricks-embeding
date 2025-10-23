@@ -93,13 +93,16 @@ export default function Home() {
               />
             </div>
             <CardHeader className="relative pt-36">
-              <CardTitle className="text-[var(--brand-ink)]">POC reservado</CardTitle>
-              <CardDescription>Espacio para embeddings u otro experimento.</CardDescription>
+              <CardTitle className="text-[var(--brand-ink)]">JSON Auto Dashboard</CardTitle>
+              <CardDescription>Sube un JSON de Lakeview y genera dashboards dinámicos automáticamente.</CardDescription>
             </CardHeader>
             <CardContent className="relative">
-              <button className="rounded-md border border-[var(--card-border)] px-3 py-2 text-sm hover:bg-[var(--brand-primary-50)]/40">
-                Notificarme
-              </button>
+              <Link
+                href="/pocs/json-auto"
+                className="inline-flex items-center gap-2 rounded-md bg-[var(--brand-primary-600)] px-3 py-2 text-white text-sm transition hover:bg-[var(--brand-primary-700)]"
+              >
+                Abrir JSON Auto
+              </Link>
             </CardContent>
           </Card>
         </div>
