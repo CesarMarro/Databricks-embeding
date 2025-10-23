@@ -1,5 +1,8 @@
 // Query runner: ejecuta consultas a Supabase con caching
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-require-imports */
+
 import { getSupabaseBrowser } from "@/lib/supabase";
 import { resolveDataset } from "./dataset-resolver";
 
@@ -11,7 +14,6 @@ interface QueryCache {
 }
 
 const cache: QueryCache = {};
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutos
 
 export async function runDatasetQuery(
   datasetName: string,
@@ -23,14 +25,9 @@ export async function runDatasetQuery(
     return acc;
   }, {} as Record<string, any>);
   
-  const cacheKey = `${datasetName}_${JSON.stringify(sortedParams)}`;
-  const cached = cache[cacheKey];
-  
-  // Disable cache for now to ensure fresh data
-  // if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-  //   console.debug(`[QueryRunner] Cache hit for ${datasetName}`);
-  //   return { data: cached.data, error: null };
-  // }
+  // Cache disabled for now to ensure fresh data on parameter changes
+  // const cacheKey = `${datasetName}_${JSON.stringify(sortedParams)}`;
+  // const cached = cache[cacheKey];
 
   // Resolve dataset to RPC
   const mapping = resolveDataset(datasetName);
@@ -82,12 +79,7 @@ export async function runDatasetQuery(
       firstRow: resultData[0],
     });
     
-    // Update cache
-    cache[cacheKey] = {
-      data: resultData,
-      timestamp: Date.now(),
-    };
-
+    // Cache disabled - return fresh data
     return { data: resultData, error: null };
   } catch (e: any) {
     console.error(`[QueryRunner] ❌ Exception:`, e);

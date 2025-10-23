@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Types para el sistema de dashboard dinámico
 
 export interface DashboardJSON {

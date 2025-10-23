@@ -6,8 +6,8 @@ import type { Widget } from "@/lib/dashboard/types";
 
 interface FilterSingleSelectWidgetProps {
   widget: Widget;
-  parameters: Record<string, any>;
-  onParameterChange?: (paramName: string, value: any) => void;
+  parameters: Record<string, unknown>;
+  onParameterChange?: (paramName: string, value: unknown) => void;
 }
 
 export function FilterSingleSelectWidget({ widget, parameters, onParameterChange }: FilterSingleSelectWidgetProps) {

@@ -32,7 +32,7 @@ export function PivotTableWidget({ widget, data }: WidgetRenderProps) {
   const colValues = [...new Set(data.map(row => row[colField]))].sort();
   
   // Create pivot map
-  const pivotMap = new Map<string, Map<string, any>>();
+  const pivotMap = new Map<string, Map<string, unknown>>();
   data.forEach(row => {
     const rowVal = row[rowField];
     const colVal = row[colField];

@@ -1,24 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Page, Widget } from "@/lib/dashboard/types";
+import type { Page } from "@/lib/dashboard/types";
 import { WidgetRenderer } from "./WidgetRenderer";
 import { runDatasetQuery } from "@/lib/dashboard/query-runner";
 
 interface DashboardLayoutProps {
   page: Page;
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
 }
 
 export function DashboardLayout({ page, parameters }: DashboardLayoutProps) {
-  const [widgetData, setWidgetData] = useState<Map<string, any[]>>(new Map());
+  const [widgetData, setWidgetData] = useState<Map<string, Record<string, unknown>[]>>(new Map());
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<Map<string, string>>(new Map());
 
   useEffect(() => {
     async function fetchAllWidgets() {
       setLoading(true);
-      const newData = new Map<string, any[]>();
+      const newData = new Map<string, Record<string, unknown>[]>();
       const newErrors = new Map<string, string>();
 
       // Fetch data for all widgets in parallel

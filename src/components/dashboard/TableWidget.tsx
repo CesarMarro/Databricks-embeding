@@ -1,11 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import type { WidgetRenderProps } from "@/lib/dashboard/types";
 
 export function TableWidget({ widget, data }: WidgetRenderProps) {
   const spec = widget.spec;
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage] = useState(0);
   const rowsPerPage = 20;
   
   if (!data || data.length === 0) {
@@ -20,7 +20,6 @@ export function TableWidget({ widget, data }: WidgetRenderProps) {
   const columns = spec?.encodings?.columns?.map((col: any) => col.fieldName) || Object.keys(data[0]);
   
   // Pagination
-  const totalPages = Math.ceil(data.length / rowsPerPage);
   const startIdx = currentPage * rowsPerPage;
   const endIdx = Math.min(startIdx + rowsPerPage, data.length);
   const paginatedData = data.slice(startIdx, endIdx);

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Widget } from "@/lib/dashboard/types";
 import { CounterWidget } from "./CounterWidget";
 import { PieWidget } from "./PieWidget";

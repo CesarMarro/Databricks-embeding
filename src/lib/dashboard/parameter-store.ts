@@ -1,30 +1,31 @@
 // Parameter store: gestiona parámetros globales y por widget
 
-import { Parameter } from "./types";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Parameter } from "./types";
 
 export class ParameterStore {
-  private params: Map<string, any> = new Map();
+  private params: Record<string, any> = {};
   private listeners: Set<() => void> = new Set();
 
   constructor(initialParams?: Record<string, any>) {
     if (initialParams) {
       Object.entries(initialParams).forEach(([key, value]) => {
-        this.params.set(key, value);
+        this.params[key] = value;
       });
     }
   }
 
   get(key: string): any {
-    return this.params.get(key);
+    return this.params[key];
   }
 
   set(key: string, value: any): void {
-    this.params.set(key, value);
+    this.params[key] = value;
     this.notifyListeners();
   }
 
   getAll(): Record<string, any> {
-    return Object.fromEntries(this.params);
+    return { ...this.params };
   }
 
   subscribe(listener: () => void): () => void {

@@ -1,12 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { useState, useEffect } from "react";
 import type { Widget } from "@/lib/dashboard/types";
 
 interface RangeSliderWidgetProps {
   widget: Widget;
-  parameters: Record<string, any>;
-  onParameterChange?: (paramName: string, value: any) => void;
+  parameters: Record<string, unknown>;
+  onParameterChange?: (paramName: string, value: unknown) => void;
 }
 
 export function RangeSliderWidget({ widget, parameters, onParameterChange }: RangeSliderWidgetProps) {
@@ -21,14 +21,14 @@ export function RangeSliderWidget({ widget, parameters, onParameterChange }: Ran
   
   // Get current values from parameters or defaults
   const [range, setRange] = useState<[number, number]>([
-    parameters[minParam] || 0,
-    parameters[maxParam] || 1
+    (parameters[minParam] as number) || 0,
+    (parameters[maxParam] as number) || 1
   ]);
   
   useEffect(() => {
     setRange([
-      parameters[minParam] || 0,
-      parameters[maxParam] || 1
+      (parameters[minParam] as number) || 0,
+      (parameters[maxParam] as number) || 1
     ]);
   }, [parameters, minParam, maxParam]);
   

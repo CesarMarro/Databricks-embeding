@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Widget styles: configuración visual para cada tipo de widget
 
 export const WIDGET_STYLES = {

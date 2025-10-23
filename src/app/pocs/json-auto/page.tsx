@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
@@ -43,7 +45,7 @@ export default function JsonAutoPage() {
       const obj = JSON.parse(jsonText) as DashboardJSON;
       setError("");
       return obj;
-    } catch (e: any) {
+    } catch {
       setError("JSON inválido. Verifica comas y comillas.");
       return null;
     }
@@ -183,67 +185,70 @@ export default function JsonAutoPage() {
         {/* Dashboard rendering */}
         {showDashboard && parsed && paramStore && (
           <section className="mt-6">
-            <div className="mb-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900">Dashboard generado</h2>
-              </div>
-              
-              {/* Global threshold control */}
-              <Card className="bg-white border-gray-200">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-4">
-                    <div className="flex-1">
-                      <label className="text-sm font-medium text-gray-900 mb-2 block">
-                        Umbral global de churn
-                      </label>
-                      <Slider
-                        min={0}
-                        max={100}
-                        step={1}
-                        value={[paramStore.get("threshold_global") || 50]}
-                        onValueChange={(values) => {
-                          paramStore.set("threshold_global", values[0]);
-                          setRefreshKey(k => k + 1); // Force refresh
-                        }}
-                        className="w-full"
-                      />
-                    </div>
-                    <div className="text-2xl font-bold text-indigo-600 min-w-[60px] text-right">
-                      {paramStore.get("threshold_global") || 50}%
-                    </div>
+            <div className="mx-auto max-w-7xl">
+              <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-4 md:p-6">
+                <div className="mb-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-semibold text-gray-900">Dashboard generado</h2>
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">
-                    Los clientes con probabilidad de churn mayor a este umbral se consideran "en riesgo"
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+                  {/* Global threshold control */}
+                  <Card className="bg-white border-gray-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-4">
+                        <div className="flex-1">
+                          <label className="text-sm font-medium text-gray-900 mb-2 block">
+                            Umbral global de churn
+                          </label>
+                          <Slider
+                            min={0}
+                            max={100}
+                            step={1}
+                            value={[paramStore.get("threshold_global") || 50]}
+                            onValueChange={(values) => {
+                              paramStore.set("threshold_global", values[0]);
+                              setRefreshKey(k => k + 1); // Force refresh
+                            }}
+                            className="w-full"
+                          />
+                        </div>
+                        <div className="text-2xl font-bold text-indigo-600 min-w-[60px] text-right">
+                          {paramStore.get("threshold_global") || 50}%
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Los clientes con probabilidad de churn mayor a este umbral se consideran &quot;en riesgo&quot;
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
 
-            {parsed.pages && parsed.pages.length > 0 ? (
-              <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="bg-white border border-gray-200">
-                  {parsed.pages
-                    .filter((p) => p.pageType !== "PAGE_TYPE_GLOBAL_FILTERS")
-                    .map((page) => (
-                      <TabsTrigger key={page.name} value={page.name} className="data-[state=active]:bg-gray-100">
-                        {page.displayName || page.name}
-                      </TabsTrigger>
-                    ))}
-                </TabsList>
+                {parsed.pages && parsed.pages.length > 0 ? (
+                  <Tabs value={activeTab} onValueChange={setActiveTab}>
+                    <TabsList className="bg-white border border-gray-200">
+                      {parsed.pages
+                        .filter((p) => p.pageType !== "PAGE_TYPE_GLOBAL_FILTERS")
+                        .map((page) => (
+                          <TabsTrigger key={page.name} value={page.name} className="data-[state=active]:bg-gray-100">
+                            {page.displayName || page.name}
+                          </TabsTrigger>
+                        ))}
+                    </TabsList>
 
-                {parsed.pages
-                  .filter((p) => p.pageType !== "PAGE_TYPE_GLOBAL_FILTERS")
-                  .map((page) => (
-                    <TabsContent key={page.name} value={page.name} className="mt-4">
-                      <DashboardLayout key={refreshKey} page={page} parameters={paramStore.getAll()} />
-                    </TabsContent>
-                  ))}
-              </Tabs>
-            ) : (
-              <div className="rounded-md border border-gray-200 p-4 text-sm text-gray-500">
-                No hay páginas para renderizar
+                    {parsed.pages
+                      .filter((p) => p.pageType !== "PAGE_TYPE_GLOBAL_FILTERS")
+                      .map((page) => (
+                        <TabsContent key={page.name} value={page.name} className="mt-4">
+                          <DashboardLayout key={refreshKey} page={page} parameters={paramStore.getAll()} />
+                        </TabsContent>
+                      ))}
+                  </Tabs>
+                ) : (
+                  <div className="rounded-md border border-gray-200 p-4 text-sm text-gray-500">
+                    No hay páginas para renderizar
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </section>
         )}
       </main>

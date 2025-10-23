@@ -35,7 +35,7 @@ export function BarWidget({ widget, data }: WidgetRenderProps) {
   const isVertical = spec.encodings?.x?.scale?.type === "categorical" || spec.encodings?.x?.scale?.type === "quantitative";
 
   // Group data by xField if there are duplicates (e.g., multiple rows per country)
-  const groupedData = data.reduce((acc: any[], row) => {
+  const groupedData = data.reduce((acc: Record<string, number>[], row) => {
     const xValue = row[xField];
     const existing = acc.find(r => r[xField] === xValue);
     if (existing) {
