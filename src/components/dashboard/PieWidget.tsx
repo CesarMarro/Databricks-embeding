@@ -12,9 +12,17 @@ export function PieWidget({ widget, data }: WidgetRenderProps) {
     );
   }
 
-  const angleField = spec.encodings?.angle?.fieldName;
-  const colorField = spec.encodings?.color?.fieldName;
+  let angleField = spec.encodings?.angle?.fieldName;
+  let colorField = spec.encodings?.color?.fieldName;
   const showLabel = spec.encodings?.label?.show ?? true;
+  
+  // Remove aggregation functions like sum(), avg(), etc.
+  if (angleField) {
+    angleField = angleField.replace(/^(sum|avg|count|min|max)\(/i, '').replace(/\)$/, '');
+  }
+  if (colorField) {
+    colorField = colorField.replace(/^(sum|avg|count|min|max)\(/i, '').replace(/\)$/, '');
+  }
 
   // Calculate total and percentages
   const total = data.reduce((sum, row) => sum + (row[angleField] || 0), 0);
@@ -42,18 +50,22 @@ export function PieWidget({ widget, data }: WidgetRenderProps) {
   const firstSegment = segments[0];
 
   return (
-    <Card className={`${WIDGET_STYLES.pie.card.padding} ${WIDGET_STYLES.pie.card.minHeight} h-full`}>
-      {spec.frame?.showTitle && (
+    <Card className={`${WIDGET_STYLES.pie.card.padding} ${WIDGET_STYLES.pie.card.minHeight} h-full bg-white border-gray-200`}>
+      {(spec.frame?.showTitle || spec.frame?.showDescription) && (
         <CardHeader>
-          <CardTitle className={WIDGET_STYLES.pie.title.fontSize}>
-            {spec.frame.title}
-          </CardTitle>
-          {spec.frame.showDescription && spec.frame.description && (
-            <CardDescription>{spec.frame.description}</CardDescription>
+          {spec.frame?.showTitle && spec.frame?.title && (
+            <CardTitle className="text-base font-semibold text-gray-900">
+              {spec.frame.title}
+            </CardTitle>
+          )}
+          {spec.frame?.showDescription && spec.frame?.description && (
+            <CardDescription className="text-sm text-gray-700">
+              {spec.frame.description}
+            </CardDescription>
           )}
         </CardHeader>
       )}
-      <CardContent className={spec.frame?.showTitle ? "" : "pt-6"}>
+      <CardContent className={(spec.frame?.showTitle || spec.frame?.showDescription) ? "" : "pt-6"}>
         <div className="flex items-center gap-8">
           {/* Donut */}
           <div

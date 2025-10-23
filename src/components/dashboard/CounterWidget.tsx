@@ -4,10 +4,22 @@ import type { WidgetRenderProps } from "@/lib/dashboard/types";
 
 export function CounterWidget({ widget, data }: WidgetRenderProps) {
   const spec = widget.spec;
+  
+  // Debug logging
+  console.log('[CounterWidget]', {
+    widgetName: widget.name,
+    hasSpec: !!spec,
+    hasData: !!data,
+    dataLength: data?.length,
+    data: data,
+  });
+  
   if (!spec || !data || data.length === 0) {
     return (
-      <Card className={WIDGET_STYLES.counter.card.padding}>
-        <CardContent className="pt-6 text-gray-500 text-sm">Sin datos</CardContent>
+      <Card className="bg-white border-gray-200 h-full flex items-center justify-center">
+        <CardContent className="text-gray-500 text-sm">
+          Sin datos ({widget.name})
+        </CardContent>
       </Card>
     );
   }
@@ -16,11 +28,43 @@ export function CounterWidget({ widget, data }: WidgetRenderProps) {
   const valueEncoding = spec.encodings?.value;
   const targetEncoding = spec.encodings?.target;
   
-  const valueField = valueEncoding?.fieldName;
-  const targetField = targetEncoding?.fieldName;
+  let valueField = valueEncoding?.fieldName;
+  let targetField = targetEncoding?.fieldName;
   
-  const value = row[valueField];
+  // Remove aggregation functions like sum(), avg(), etc.
+  if (valueField) {
+    valueField = valueField.replace(/^(sum|avg|count|min|max)\(/i, '').replace(/\)$/, '');
+  }
+  if (targetField) {
+    targetField = targetField.replace(/^(sum|avg|count|min|max)\(/i, '').replace(/\)$/, '');
+  }
+  
+  console.log('[CounterWidget] Fields', {
+    widgetName: widget.name,
+    valueField,
+    targetField,
+    availableFields: Object.keys(row),
+    rowData: row,
+  });
+  
+  // Try to find value in row (case insensitive)
+  let value = row[valueField];
+  if (value === undefined && valueField) {
+    // Try lowercase
+    const lowerField = Object.keys(row).find(k => k.toLowerCase() === valueField.toLowerCase());
+    if (lowerField) {
+      console.log(`[CounterWidget] Found field via case-insensitive: ${lowerField}`);
+      value = row[lowerField];
+    }
+  }
+  
   const target = targetField ? row[targetField] : null;
+  
+  console.log('[CounterWidget] Values', {
+    widgetName: widget.name,
+    value,
+    target,
+  });
 
   // Format value
   const formatType = valueEncoding?.format?.type || "number-plain";
@@ -47,14 +91,14 @@ export function CounterWidget({ widget, data }: WidgetRenderProps) {
   const isItalic = valueEncoding?.style?.italic;
 
   return (
-    <Card className={`${WIDGET_STYLES.counter.card.padding} ${WIDGET_STYLES.counter.card.minHeight}`}>
+    <Card className="bg-white border-gray-200 h-full flex flex-col">
       {spec.frame?.showTitle && (
         <CardHeader className="pb-2">
-          <CardTitle className={WIDGET_STYLES.counter.title.fontSize}>
+          <CardTitle className="text-sm font-medium text-gray-900">
             {spec.frame.title}
           </CardTitle>
           {spec.frame.showDescription && spec.frame.description && (
-            <CardDescription className={WIDGET_STYLES.counter.description.fontSize}>
+            <CardDescription className="text-xs text-gray-700">
               {spec.frame.description}
             </CardDescription>
           )}

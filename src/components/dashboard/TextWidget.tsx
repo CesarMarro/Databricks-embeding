@@ -10,7 +10,7 @@ export function TextWidget({ widget }: TextWidgetProps) {
   const lines = widget.multilineTextboxSpec?.lines || [];
 
   return (
-    <Card className={WIDGET_STYLES.text.card.padding}>
+    <Card className="bg-white border-gray-200 h-full p-4">
       <CardContent className="pt-6 space-y-2">
         {lines.map((line, idx) => {
           // Simple markdown-like parsing

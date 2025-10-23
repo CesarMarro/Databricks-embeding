@@ -1,41 +1,51 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { WIDGET_STYLES } from "@/lib/dashboard/widget-styles";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import type { WidgetRenderProps } from "@/lib/dashboard/types";
 
 export function TableWidget({ widget, data }: WidgetRenderProps) {
   const spec = widget.spec;
+  const [currentPage, setCurrentPage] = useState(0);
+  const rowsPerPage = 20;
+  
   if (!data || data.length === 0) {
     return (
-      <Card className={WIDGET_STYLES.table.card.padding}>
-        <CardContent className="pt-6 text-gray-500 text-sm">Sin datos</CardContent>
+      <Card className="bg-white border-gray-200 h-full flex items-center justify-center p-4">
+        <CardContent className="text-gray-500 text-sm">Sin datos</CardContent>
       </Card>
     );
   }
 
-  // Infer columns from first row
-  const columns = Object.keys(data[0]);
+  // Get columns from spec or infer from data
+  const columns = spec?.encodings?.columns?.map((col: any) => col.fieldName) || Object.keys(data[0]);
+  
+  // Pagination
+  const totalPages = Math.ceil(data.length / rowsPerPage);
+  const startIdx = currentPage * rowsPerPage;
+  const endIdx = Math.min(startIdx + rowsPerPage, data.length);
+  const paginatedData = data.slice(startIdx, endIdx);
 
   return (
-    <Card className={WIDGET_STYLES.table.card.padding}>
+    <Card className="bg-white border-gray-200 h-full flex flex-col">
       {spec?.frame?.showTitle && (
-        <CardHeader>
-          <CardTitle className={WIDGET_STYLES.table.title.fontSize}>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-semibold text-gray-900">
             {spec.frame.title}
           </CardTitle>
           {spec.frame.showDescription && spec.frame.description && (
-            <CardDescription>{spec.frame.description}</CardDescription>
+            <CardDescription className="text-sm text-gray-700">{spec.frame.description}</CardDescription>
           )}
         </CardHeader>
       )}
-      <CardContent className={spec?.frame?.showTitle ? "" : "pt-6"}>
-        <div className="overflow-x-auto">
+      <CardContent className="flex-1 overflow-hidden flex flex-col p-0">
+        <div className="flex-1 overflow-auto">
           <table className="w-full text-sm">
-            <thead className={WIDGET_STYLES.table.header.background}>
+            <thead className="bg-gray-50 sticky top-0">
               <tr className="border-b">
-                {columns.map((col) => (
+                {columns.map((col: string) => (
                   <th
                     key={col}
-                    className={`text-left ${WIDGET_STYLES.table.header.padding} ${WIDGET_STYLES.table.header.fontSize} ${WIDGET_STYLES.table.header.fontWeight}`}
+                    className="text-xs font-medium text-gray-900 p-3 text-left whitespace-nowrap"
                   >
                     {col}
                   </th>
@@ -43,24 +53,34 @@ export function TableWidget({ widget, data }: WidgetRenderProps) {
               </tr>
             </thead>
             <tbody>
-              {data.slice(0, 100).map((row, idx) => (
-                <tr key={idx} className={`${WIDGET_STYLES.table.row.border} ${WIDGET_STYLES.table.row.hover}`}>
-                  {columns.map((col) => {
-                    const value = row[col];
-                    const isNumber = typeof value === "number";
+              {paginatedData.map((row, idx) => (
+                <tr key={idx} className="border-b hover:bg-gray-50 transition-colors">
+                  {columns.map((col: string) => {
+                    // Try exact match first, then case-insensitive
+                    let value = row[col];
+                    if (value === undefined) {
+                      const lowerCol = Object.keys(row).find(k => k.toLowerCase() === col.toLowerCase());
+                      if (lowerCol) value = row[lowerCol];
+                    }
+                    let displayValue = value !== null && value !== undefined ? String(value) : "-";
+                    
+                    // Format numbers
+                    if (typeof value === "number") {
+                      if (col.toLowerCase().includes("prob") || col.toLowerCase().includes("pct")) {
+                        displayValue = `${(value * 100).toFixed(2)}%`;
+                      } else if (col.toLowerCase().includes("balance")) {
+                        displayValue = `$${value.toLocaleString()}`;
+                      } else {
+                        displayValue = value.toLocaleString();
+                      }
+                    }
                     
                     return (
                       <td
                         key={col}
-                        className={`${WIDGET_STYLES.table.cell.padding} ${WIDGET_STYLES.table.cell.fontSize} ${
-                          isNumber ? "text-right" : ""
-                        }`}
+                        className="text-sm text-gray-900 p-3 whitespace-nowrap"
                       >
-                        {isNumber && value > 0 && value < 1 && col.toLowerCase().includes("prob")
-                          ? `${(value * 100).toFixed(2)}%`
-                          : isNumber
-                          ? value.toLocaleString()
-                          : value}
+                        {displayValue}
                       </td>
                     );
                   })}

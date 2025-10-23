@@ -85,6 +85,7 @@ export type WidgetType =
   | "pie"
   | "bar"
   | "table"
+  | "pivot"
   | "filter-single-select"
   | "range-slider"
   | "choropleth-map"

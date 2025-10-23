@@ -9,7 +9,7 @@ export const WIDGET_STYLES = {
     title: {
       fontSize: "text-sm",
       fontWeight: "font-medium",
-      color: "text-gray-700",
+      color: "text-gray-900",
       marginBottom: "mb-2",
     },
     value: {
@@ -20,11 +20,11 @@ export const WIDGET_STYLES = {
     },
     target: {
       fontSize: "text-xs",
-      color: "text-gray-500",
+      color: "text-gray-600",
     },
     description: {
       fontSize: "text-xs",
-      color: "text-gray-500",
+      color: "text-gray-600",
       marginTop: "mt-1",
     },
   },
@@ -102,7 +102,7 @@ export const WIDGET_STYLES = {
     header: {
       fontSize: "text-xs",
       fontWeight: "font-medium",
-      color: "text-gray-700",
+      color: "text-gray-900",
       padding: "p-2",
       background: "bg-gray-50",
     },
